@@ -1,7 +1,7 @@
 <template>
   <div>
     <ul class="list">
-      <li class="card" v-for="(categoria, index) in localCategorias" :key="index">
+      <li class="card" v-for="(categoria, index) in categorias" :key="index">
         <div v-if="editIndex === index" class="edit-mode">
           <input
             v-model="editText"
@@ -37,7 +37,7 @@
       </q-card>
     </q-dialog>
 
-    <!-- Modal de Confirmação de Exclusão -->
+
     <q-dialog v-model="showDeleteModal" persistent>
       <q-card class="modal-card">
         <q-card-section class="modal-content">
@@ -62,6 +62,7 @@
 
 <script setup>
 import { ref, watch  } from 'vue';
+import { useCategoriaStore } from '../store/useCategoriaStore.js';
 
 const props = defineProps({
   categorias: {
@@ -70,7 +71,9 @@ const props = defineProps({
   }
 });
 
-const localCategorias = ref([...props.categorias]);
+
+const categoriaStore = useCategoriaStore();
+const categorias = categoriaStore.categorias;
 
 const showModal = ref(false);
 const showDeleteModal = ref(false);
@@ -78,31 +81,23 @@ const selectedCategoryIndex = ref(null);
 const editIndex = ref(null);
 const editText = ref('');
 
-
-watch(
-  () => props.categorias,
-  (newCategorias) => {
-    localCategorias.value = [...newCategorias];
-  }
-);
-
 function openModalRenameDelete(index) {
   selectedCategoryIndex.value = index;
-  editText.value = localCategorias.value[index];
+  editText.value = categoriaStore.categorias[index];
   showModal.value = true;
 }
 
 function transformInput() {
   if (selectedCategoryIndex.value !== null) {
     editIndex.value = selectedCategoryIndex.value;
-    editText.value = localCategorias.value[editIndex.value];
+    editText.value = categoriaStore.categorias[editIndex.value];
     showModal.value = false;
   }
 }
 
 function showDeleteConfirmation() {
-  showModal.value = false; // Fecha a modal de opções
-  showDeleteModal.value = true; // Abre a modal de confirmação de exclusão
+  showModal.value = false;
+  showDeleteModal.value = true;
 }
 
 function cancelDelete() {
@@ -111,14 +106,14 @@ function cancelDelete() {
 
 function confirmDelete() {
   if (selectedCategoryIndex.value !== null) {
-    localCategorias.value.splice(selectedCategoryIndex.value, 1);
+    categoriaStore.removeCategoria(selectedCategoryIndex.value)
     showDeleteModal.value = false;
   }
 }
 
 function saveEdit(index) {
   if (editIndex.value === index) {
-    categorias.value[index] = editText.value;
+    categoriaStore.updateCategoria(index, editText.value);
     editIndex.value = null;
   }
 }

@@ -19,12 +19,16 @@
 <script setup>
 import { ref } from 'vue';
 import CardCategoria from '../components/CardCategoria.vue';
+import { useCategoriaStore } from '../store/useCategoriaStore.js';
 
-const text = ref('');               
-const categorias = ref([]);
+const categoriaStore = useCategoriaStore();
+
+const text = ref('');
+//const categorias = ref([]);
 
 function criarCategoria() {
   if (text.value.trim()) {
+    categoriaStore.addCategoria(text.value)
     categorias.value.push(text.value);
     text.value = '';
   }
