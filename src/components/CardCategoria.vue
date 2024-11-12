@@ -1,7 +1,7 @@
 <template>
   <div>
     <ul class="list">
-      <li class="card" v-for="(categoria, index) in categorias" :key="index">
+      <li class="card" v-for="(categoria, index) in localCategorias" :key="index">
         <div v-if="editIndex === index" class="edit-mode">
           <input
             v-model="editText"
@@ -61,25 +61,41 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, watch  } from 'vue';
 
-const categorias = ref(['Categoria 1', 'Categoria 2', 'Categoria 3']);
+const props = defineProps({
+  categorias: {
+    type: Array,
+    default: () => []
+  }
+});
+
+const localCategorias = ref([...props.categorias]);
+
 const showModal = ref(false);
 const showDeleteModal = ref(false);
 const selectedCategoryIndex = ref(null);
 const editIndex = ref(null);
 const editText = ref('');
 
+
+watch(
+  () => props.categorias,
+  (newCategorias) => {
+    localCategorias.value = [...newCategorias];
+  }
+);
+
 function openModalRenameDelete(index) {
   selectedCategoryIndex.value = index;
-  editText.value = categorias.value[index];
+  editText.value = localCategorias.value[index];
   showModal.value = true;
 }
 
 function transformInput() {
   if (selectedCategoryIndex.value !== null) {
     editIndex.value = selectedCategoryIndex.value;
-    editText.value = categorias.value[editIndex.value];
+    editText.value = localCategorias.value[editIndex.value];
     showModal.value = false;
   }
 }
@@ -95,7 +111,7 @@ function cancelDelete() {
 
 function confirmDelete() {
   if (selectedCategoryIndex.value !== null) {
-    categorias.value.splice(selectedCategoryIndex.value, 1);
+    localCategorias.value.splice(selectedCategoryIndex.value, 1);
     showDeleteModal.value = false;
   }
 }
