@@ -3,16 +3,15 @@ const routes = [
     path: '/',
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: '', component: () => import('pages/IndexPage.vue') }
+      { path: '', redirect: '/InformationCategoria' }, 
+      { path: 'InformationCategoria', component: () => import('pages/InformationCategoria.vue') },
+      { path: 'CriarCategoriaScreen', component: () => import('pages/CriarCategoriaScreen.vue') }
     ]
   },
-
-  // Always leave this as last one,
-  // but you can also remove it
   {
     path: '/:catchAll(.*)*',
-    component: () => import('pages/ErrorNotFound.vue')
+    component: () => import('pages/CriarCategoriaScreen.vue'),
   }
-]
+];
 
-export default routes
+export default routes;
