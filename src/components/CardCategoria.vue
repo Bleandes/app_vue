@@ -1,6 +1,7 @@
 <template>
   <div>
-    <ul class="list">
+    <div v-if="loading">Carregando...</div>
+    <ul v-else class="list">
       <li class="card" v-for="(categoria, index) in categorias" :key="index">
         <div v-if="editIndex === index" class="edit-mode">
           <input
@@ -61,19 +62,77 @@
 </template>
 
 <script setup>
-import { ref, watch  } from 'vue';
+import { ref, onMounted, watch  } from 'vue';
 import { useCategoriaStore } from '../store/useCategoriaStore.js';
+import categoriaService from '../services/categoriaService.js';
 
-const props = defineProps({
-  categorias: {
-    type: Array,
-    default: () => []
-  }
-});
-
+let categorias = ref([]);
+const loading = ref(true);
 
 const categoriaStore = useCategoriaStore();
-const categorias = categoriaStore.categorias;
+
+
+watch(
+  () => categoriaStore.categorias.length,
+  async (newLength, oldLength) => {
+    if (newLength > oldLength) {
+      const novoItem = categoriaStore.categorias[newLength - 1];
+      categorias = [...categorias, novoItem.data.name];
+
+     { deep: true }
+    }
+  }
+);
+
+
+
+async function fetchCategorias() {
+  try {
+    const response = await categoriaService.getAllCategorias();
+
+    categorias = response.data.map((item) => item.name);
+    //categorias = categoriaStore.categorias.map((item) => item.name)
+    categoriaStore.categorias = response.data
+  } catch (error) {
+    console.error('Erro ao buscar categorias:', error);
+  } finally {
+    loading.value = false;
+  }
+}
+
+
+
+
+async function deleteCategorias(id, index) {
+  try {
+
+    loading.value = true;
+    const response = await categoriaService.deleteCategoria(id);
+
+    categorias.value.splice(index, 1);
+
+    categoriaStore.categorias = response.data;
+  } catch (error) {
+    console.error('Erro ao buscar categorias:', error);
+  }
+  finally{
+    loading.value = false;
+  }
+}
+
+
+async function updateCategoriaRequest(id, data) {
+  try {
+     return await categoriaService.updateCategoria(id, data);
+  } catch (error) {
+    console.error('Erro ao buscar categorias:', error);
+  }
+}
+
+
+    onMounted(() => {
+  fetchCategorias();
+});
 
 const showModal = ref(false);
 const showDeleteModal = ref(false);
@@ -87,10 +146,11 @@ function openModalRenameDelete(index) {
   showModal.value = true;
 }
 
+
 function transformInput() {
   if (selectedCategoryIndex.value !== null) {
     editIndex.value = selectedCategoryIndex.value;
-    editText.value = categoriaStore.categorias[editIndex.value];
+    editText.value = categoriaStore.categorias[editIndex.value].name;
     showModal.value = false;
   }
 }
@@ -106,15 +166,18 @@ function cancelDelete() {
 
 function confirmDelete() {
   if (selectedCategoryIndex.value !== null) {
+    deleteCategorias(categoriaStore.categorias[selectedCategoryIndex.value].id, selectedCategoryIndex.value)
     categoriaStore.removeCategoria(selectedCategoryIndex.value)
     showDeleteModal.value = false;
   }
 }
 
-function saveEdit(index) {
+async function saveEdit(index) {
   if (editIndex.value === index) {
-    categoriaStore.updateCategoria(index, editText.value);
-    editIndex.value = null;
+    updateCategoriaRequest(categoriaStore.categorias[index].id, {name: editText.value})
+      categoriaStore.updateCategoria(categoriaStore.categorias[index].id, editText.value);
+      categorias[index] = editText.value;
+      editIndex.value = null;
   }
 }
 </script>

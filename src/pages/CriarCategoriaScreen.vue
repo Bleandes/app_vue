@@ -9,28 +9,31 @@
     </div>
 
     <div>
-
       <CardCategoria :categorias="categorias" />
-
     </div>
   </q-page>
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, inject } from 'vue';
 import CardCategoria from '../components/CardCategoria.vue';
 import { useCategoriaStore } from '../store/useCategoriaStore.js';
+import categoriaService from '../services/categoriaService.js';
+
 
 const categoriaStore = useCategoriaStore();
-
 const text = ref('');
-//const categorias = ref([]);
+const isLoading = inject('isLoading');
 
-function criarCategoria() {
-  if (text.value.trim()) {
-    categoriaStore.addCategoria(text.value)
-    categorias.value.push(text.value);
-    text.value = '';
+async function criarCategoria() {
+  try {
+    isLoading.value = true;
+    const response = await categoriaService.createCategoria({name: text.value});
+    categoriaStore.addCategoria(response)
+  } catch (error) {
+    console.error('Erro ao buscar categorias:', error);
+  }finally {
+    isLoading.value = false;
   }
 }
 
