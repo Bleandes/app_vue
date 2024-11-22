@@ -45,4 +45,38 @@ defineOptions({
   font-size: 1rem;
   padding: 1rem;
   }
+
+  @media (min-width: 768px) {
+    .texto_principal_categoria{
+      font-weight: 700;
+      font-size: 1.8rem;
+      margin-top: 1rem;
+    }
+    .container_texto_categoria{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-top: 1rem;
+  font-size: 1.3rem;
+  padding: 1rem;
+  }
+}
+
+@media (min-width: 900px) {
+  .texto_principal_categoria{
+      font-weight: 700;
+      font-size: 2rem;
+      margin-top: 1rem;
+    }
+    .container_texto_categoria{
+  display: flex;
+  flex-direction: column;
+  justify-content: baseline;
+  align-items: baseline;
+  margin-top: 1rem;
+  font-size: 1.6rem;
+  padding: 1rem;
+  }
+}
   </style>

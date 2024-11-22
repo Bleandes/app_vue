@@ -65,4 +65,32 @@ defineOptions({
   height: 44px;
   border: 1px solid #008197;
 }
+
+@media (min-width: 768px) {
+  .container-screen {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  margin-top: 1.7rem;
+  margin-left: 1rem;
+  margin-right: 1rem;
+}
+.input_criar_categoria {
+  border-radius: 2rem;
+  width: 456px;
+  height: 44px;
+  border: 1px solid #008197;
+}
+.botao_criar_categoria {
+  border-radius: 2rem;
+  height: 44px;
+  width: 200px;
+  border: none;
+  margin-left: 0.5rem;
+  background-color: #F24F82;
+  color: white;
+}
+}
+@media (min-width: 900px) {}
 </style>

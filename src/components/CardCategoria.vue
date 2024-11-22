@@ -288,4 +288,33 @@ async function saveEdit(index) {
   align-items: center;
   width: 100%;
 }
+
+@media (min-width: 768px) {
+  .card {
+  display: flex;
+  padding: 0.5rem 0.8rem;
+  justify-content: space-between;
+  align-items: center;
+  width: 653px;
+  height: 52px;
+  background-color: #F3F3F5;
+  border-radius: 14px;
+  margin-left: 3rem;
+  margin-top: 0.5rem;
+}
+}
+@media (min-width: 900px) {
+  .card {
+  display: flex;
+  padding: 0.5rem 0.8rem;
+  justify-content: space-between;
+  align-items: center;
+  width: 653px;
+  height: 52px;
+  background-color: #F3F3F5;
+  border-radius: 14px;
+  margin-left: 24rem;
+  margin-top: 0.5rem;
+}
+}
 </style>
